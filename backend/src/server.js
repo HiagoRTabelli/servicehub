@@ -13,15 +13,18 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://SEU-FRONTEND.vercel.app",
+      "https://servicehub-dun.vercel.app",
     ],
   })
 );
+
 app.use(express.json());
+
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api", reportRoutes);
+
 app.use("/uploads", express.static("uploads"));
 
 const PORT = process.env.PORT || 3000;
