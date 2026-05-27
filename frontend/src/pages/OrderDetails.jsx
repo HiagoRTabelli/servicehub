@@ -107,21 +107,19 @@ function OrderDetails() {
     }
   }
 
-  function getAttachmentUrl() {
-    if (!order?.report?.attachmentUrl) {
-      return null;
-    }
-
-    if (order.report.attachmentUrl.startsWith("http")) {
-      return order.report.attachmentUrl;
-    }
-
-    if (order.report.attachmentUrl.startsWith("/uploads")) {
-      return `http://localhost:3000${order.report.attachmentUrl}`;
-    }
-
-    return `http://localhost:3000/uploads/${order.report.attachmentUrl}`;
+ function getAttachmentUrl() {
+  if (!order?.report?.attachmentUrl) {
+    return null;
   }
+
+  const backendUrl = "https://servicehub-fvu4.onrender.com";
+
+  if (order.report.attachmentUrl.startsWith("http")) {
+    return order.report.attachmentUrl;
+  }
+
+  return `${backendUrl}${order.report.attachmentUrl}`;
+}
 
   function openAttachment() {
     const fileUrl = getAttachmentUrl();
