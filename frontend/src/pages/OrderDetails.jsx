@@ -97,7 +97,6 @@ function OrderDetails() {
       }
 
       await api.post(`/orders/${id}/report`, formData);
-      await api.patch(`/orders/${id}/finish`);
 
       alert("OS finalizada com sucesso!");
       navigate("/orders");
