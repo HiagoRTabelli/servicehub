@@ -118,7 +118,11 @@ function OrderDetails() {
     return order.report.attachmentUrl;
   }
 
-  return `${backendUrl}${order.report.attachmentUrl}`;
+  if (order.report.attachmentUrl.startsWith("/uploads")) {
+    return `${backendUrl}${order.report.attachmentUrl}`;
+  }
+
+  return `${backendUrl}/uploads/${order.report.attachmentUrl}`;
 }
 
   function openAttachment() {
