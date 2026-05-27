@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TECHNICIAN
+}
+
+enum Priority {
+  EMERGENCY
+  MODERATE
+  ROUTINE
+}
+
+enum OrderStatus {
+  AVAILABLE
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
+}
+
+enum ServiceType {
+  PREVENTIVE
+  CORRECTIVE
+  PREDICTIVE
+  INSTALLATION
+}
+
+enum FinalStatus {
+  RESOLVED
+  PARTIALLY_RESOLVED
+  PENDING
+  WAITING_PART
+  NEEDS_RETURN
+  NOT_RESOLVED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(TECHNICIAN)
+  active       Boolean  @default(true)
+  employeeCode String?  @unique
+  photoUrl     String?
+
+  assignedOrders ServiceOrder[] @relation("AssignedOrders")
+  teamOrders      OrderTeamMember[]
+  reports         ServiceReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceOrder {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  title       String
+  description String
+  location    String
+  equipment   String
+  priority    Priority
+  status      OrderStatus @default(AVAILABLE)
+
+  assignedToId String?
+  assignedTo   User? @relation("AssignedOrders", fields: [assignedToId], references: [id])
+
+  report      ServiceReport?
+  teamMembers OrderTeamMember[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  finishedAt DateTime?
+}
+
+model ServiceReport {
+  id              String      @id @default(uuid())
+  serviceType     ServiceType
+  actionTaken     String
+  equipmentServed String
+  finalStatus     FinalStatus
+  observations    String
+  attachmentUrl   String?
+
+  orderId String       @unique
+  order   ServiceOrder @relation(fields: [orderId], references: [id])
+
+  technicianId String
+  technician   User @relation(fields: [technicianId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model OrderTeamMember {
+  id String @id @default(uuid())
+
+  orderId String
+  order   ServiceOrder @relation(fields: [orderId], references: [id])
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([orderId, userId])
+}
