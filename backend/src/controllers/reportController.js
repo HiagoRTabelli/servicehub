@@ -2,7 +2,7 @@ const prisma = require("../config/prisma");
 
 async function createReport(req, res) {
   try {
-    const { orderId } = req.params;
+    const orderId = req.params.orderId || req.params.id;
 
     const {
       serviceType,
@@ -12,7 +12,7 @@ async function createReport(req, res) {
       observations,
     } = req.body;
 
-    const attachmentUrl = req.file ? req.file.filename : null;
+    const attachmentUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const report = await prisma.serviceReport.create({
       data: {
@@ -38,7 +38,10 @@ async function createReport(req, res) {
     return res.status(201).json(report);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "Erro ao criar relatório" });
+
+    return res.status(500).json({
+      error: "Erro ao criar relatório",
+    });
   }
 }
 
